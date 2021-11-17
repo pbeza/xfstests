@@ -1,0 +1,35 @@
+#!/bin/bash
+
+if [[ $EUID -ne 0 ]]; then
+	echo "must run as root"
+	exit 1
+fi
+
+# Try to keep the machine usable while the tests are running.
+renice 19 $$ > /dev/null
+
+echo "fuse-wildland $(git rev-parse --abbrev-ref HEAD)/$(git rev-parse --short HEAD)"
+date -u
+echo
+
+# Test root dir
+R=$HOME/wildland
+
+export TEST_DEV="wildland"
+export TEST_DIR=$R
+
+# export SCRATCH_DEV="wildland"
+# export SCRATCH_MNT=$R
+
+# mkdir -p $TEST_DIR $SCRATCH_MNT || exit
+mkdir -p $TEST_DIR || exit
+
+type wl
+wl --version
+export FSTYP=fuse.wildland
+
+SECONDS=0  # bash-specific way to measure elapsed time
+./check $*
+RET=$?
+echo "Runtime was $SECONDS seconds, exit code $RET"
+exit $RET

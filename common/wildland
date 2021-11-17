@@ -1,0 +1,28 @@
+#
+# wildland-specific functions.
+#
+
+_wildland_mount()
+{
+	# local dir=$1  # wildland
+	# local mnt=$2  # /root/wildland
+	# $3 ... -o
+	# $4 ... remount,ro / nosuid / etc.
+
+	# Check that the executable is available
+
+	if ! type wl > /dev/null; then
+		type wl
+		return 1
+	fi
+
+	# Handle remount option properly
+
+	if [[ "$4" == *"remount"* ]]; then
+		wl stop &> /dev/null
+		# fusermount -u $2
+	fi
+
+	wl start -s --skip-forest-mount &> /dev/null
+	wl c mount xfstests &> /dev/null
+}

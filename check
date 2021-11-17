@@ -4,6 +4,7 @@
 #
 # Control script for QA
 #
+
 tmp=/tmp/$$
 status=0
 needwrap=true
